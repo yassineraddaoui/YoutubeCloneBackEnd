@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 
 @Service
 public class VideoStorageService {
-    private final Path rootPicturesUser = Paths.get("uploads/video/user/");
+    private final static Path rootPicturesUser = Paths.get("uploads/user/");
 
     public void init() {
         try {
@@ -24,21 +24,20 @@ public class VideoStorageService {
         }
     }
 
-    public String storeVideo(MultipartFile file) throws IOException {
+    public String storeFile(MultipartFile file) throws IOException {
         try {
             String originalFilename = file.getOriginalFilename();
             String uniqueFilename = generateUniqueFilename(originalFilename);
             Files.copy(file.getInputStream(), rootPicturesUser.resolve(uniqueFilename));
-            return rootPicturesUser+uniqueFilename;
+            return uniqueFilename;
         } catch (Exception e) {
             throw new RuntimeException("Error: " + e.getMessage());
         }
     }
-    public Resource loadVideoUser(String filename) {
+    public static Resource loadFileUser(String filename) {
         try {
-            Path file = rootPicturesUser.resolve(filename);
+            Path file = Paths.get(System.getProperty("user.dir"), filename);
             Resource resource = new UrlResource(file.toUri());
-
             if (resource.exists() || resource.isReadable()) {
                 return resource;
             } else {
@@ -52,7 +51,7 @@ public class VideoStorageService {
     private String generateUniqueFilename(String originalFilename) {
         long timestamp = System.currentTimeMillis();
         String fileExtension = StringUtils.getFilenameExtension(originalFilename);
-        return "video_" + timestamp + (StringUtils.hasText(fileExtension) ? "." + fileExtension : "");
+        return "file_" + timestamp + (StringUtils.hasText(fileExtension) ? "." + fileExtension : "");
     }
 
 }
