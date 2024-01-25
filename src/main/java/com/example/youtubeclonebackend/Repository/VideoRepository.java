@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface VideoRepository extends MongoRepository<Video,Long> {
 
-    Page<Video> findByTitle(String title,Pageable pageable);
+    Page<Video> findByTitleOrTagsOrPublisher(String title,String tag,String publisher,Pageable pageable);
 }

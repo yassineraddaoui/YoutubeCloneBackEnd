@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Data
 public class VideosResponse implements Serializable {
-    private byte[] video;
+    //private byte[] video;
     private byte[] image;
 
     private String channel;
@@ -27,11 +27,13 @@ public class VideosResponse implements Serializable {
 
     public static VideosResponse build(Video v) {
         try {
-
-
             return VideosResponse.builder().title(v.getTitle())
                     //.channel() // name of the channel
-                    .video(VideoStorageService.loadFileUser(v.getVideoUrl()).getContentAsByteArray()).image(VideoStorageService.loadFileUser(v.getImageUrl()).getContentAsByteArray()).viewsCount(v.getViewCount().get()).uploadDate(v.getUploadDate()).build();
+         //NO NEED  .video(VideoStorageService.loadFileUser(v.getVideoUrl()).getContentAsByteArray())
+                    .image(VideoStorageService.loadFileUser(v.getImageUrl()).getContentAsByteArray())
+                    .viewsCount(v.getViewCount().get())
+                    .uploadDate(v.getUploadDate())
+                    .build();
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

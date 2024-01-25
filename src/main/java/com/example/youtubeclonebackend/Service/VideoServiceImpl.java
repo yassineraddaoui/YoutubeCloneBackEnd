@@ -36,7 +36,7 @@ public class VideoServiceImpl implements  VideoService {
         video.setVideoUrl("/uploads/user/" + videoUrl);
         video.setImageUrl("/uploads/user/" + imageUrl );
         video.setUploadDate(LocalDateTime.now());
-        var savedVideo = videoRepository.save(video);
+        videoRepository.save(video);
     }
 
     @Override
@@ -48,6 +48,6 @@ public class VideoServiceImpl implements  VideoService {
     @Override
     public Page<VideosResponse> searchVideoByTitle(String title, int pageNo) {
         Pageable pageable= PageRequest.of(pageNo,3);
-        return videoRepository.findByTitle(title,pageable).map(VideosResponse::build);
+        return videoRepository.findByTitleOrTagsOrPublisher(title,title,title,pageable).map(VideosResponse::build);
     }
 }

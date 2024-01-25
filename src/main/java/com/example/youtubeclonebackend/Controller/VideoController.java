@@ -30,8 +30,9 @@ public class VideoController {
     @GetMapping
     ResponseEntity<?> getVideos(@RequestParam(defaultValue = "0", name = "page") int pageNo) {
         return new ResponseEntity<>(videoService.findPaginated(pageNo), HttpStatus.OK);
-
     }
+
+
 
 
 }
