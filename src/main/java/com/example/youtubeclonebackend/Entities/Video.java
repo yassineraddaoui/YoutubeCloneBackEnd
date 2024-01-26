@@ -23,7 +23,7 @@ public class Video {
     @Id
     private String id;
     private String title;
-    private Long publisher;
+    private String publisher;
     private Set<String> tags=new HashSet<>();
     private List<Comment> commentList = new CopyOnWriteArrayList<>();
     private LocalDateTime uploadDate;

@@ -22,6 +22,7 @@ public class VideosResponse implements Serializable {
     private String channel;
     private String channelUrl;
     private String title;
+    private String id;
     private Integer viewsCount;
     private LocalDateTime uploadDate;
 
@@ -31,6 +32,7 @@ public class VideosResponse implements Serializable {
                     //.channel() // name of the channel
          //NO NEED  .video(VideoStorageService.loadFileUser(v.getVideoUrl()).getContentAsByteArray())
                     .image(VideoStorageService.loadFileUser(v.getImageUrl()).getContentAsByteArray())
+                    .id(v.getId())
                     .viewsCount(v.getViewCount().get())
                     .uploadDate(v.getUploadDate())
                     .build();
