@@ -23,16 +23,17 @@ public class VideoController {
         videoService.uploadVideo(uploadVideoRequest);
         return new ResponseEntity<>(HttpStatusCode.valueOf(200));
     }
+
     @GetMapping("/{id}")
-    ResponseEntity<VideoResponse> getVideo(@PathVariable String id, Principal authUser){
-        var video=videoService.getVideo(id,authUser);
-        return new ResponseEntity<>(new VideoResponse(video),HttpStatus.OK);
+    ResponseEntity<VideoResponse> getVideo(@PathVariable String id, Principal authUser) {
+        var video = videoService.getVideo(id, authUser);
+        return new ResponseEntity<>(new VideoResponse(video), HttpStatus.OK);
     }
 
     @GetMapping("/search/{title}")
     ResponseEntity<?> searchVideo(@PathVariable String title,
-                                     @RequestParam(defaultValue = "0", name = "page") int pageNo) {
-        return new ResponseEntity<>(videoService.searchVideoByTitle(title, pageNo).getContent(),HttpStatus.OK);
+                                  @RequestParam(defaultValue = "0", name = "page") int pageNo) {
+        return new ResponseEntity<>(videoService.searchVideoByTitle(title, pageNo).getContent(), HttpStatus.OK);
     }
 
     @GetMapping
@@ -40,7 +41,13 @@ public class VideoController {
         return new ResponseEntity<>(videoService.findPaginated(pageNo), HttpStatus.OK);
     }
 
-
-
+    @PostMapping("/like/{videoId}")
+    void likeVideo(@PathVariable String videoId,Principal principal) {
+        videoService.likeVideo(videoId,principal);
+    }
+    @PostMapping("/dislike/{videoId}")
+    void dislikeVideo(@PathVariable String videoId,Principal principal) {
+        videoService.dislikeVideo(videoId,principal);
+    }
 
 }

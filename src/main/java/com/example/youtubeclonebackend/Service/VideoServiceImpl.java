@@ -1,13 +1,16 @@
 package com.example.youtubeclonebackend.Service;
 
+import com.example.youtubeclonebackend.Entities.User;
 import com.example.youtubeclonebackend.Entities.Video;
 import com.example.youtubeclonebackend.Payload.Request.UploadVideoRequest;
 import com.example.youtubeclonebackend.Payload.Response.VideosResponse;
+import com.example.youtubeclonebackend.Repository.UserRepository;
 import com.example.youtubeclonebackend.Repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -21,6 +24,7 @@ public class VideoServiceImpl implements VideoService {
     private final VideoStorageService videoStorageService;
     private final VideoRepository videoRepository;
     private final HistoryService historyService;
+    private final UserRepository userRepository;
 
     @Override
     public void uploadVideo(UploadVideoRequest uploadVideoRequest) {
@@ -62,5 +66,47 @@ public class VideoServiceImpl implements VideoService {
 
     public Video getVideo(String id) {
         return videoRepository.findById(id).orElseThrow();
+    }
+
+    @Override
+    public void likeVideo(String videoId, Principal connectedUser) {
+        User authUser = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+
+        var video = videoRepository.findById(videoId).orElseThrow();
+        if (authUser.getDisLikedVideos().contains(videoId)) {
+            authUser.removeFromDislikedVideos(videoId);
+            video.undoDislike();
+        }
+
+        if (authUser.getLikedVideos().contains(videoId)) {
+            authUser.removeFromLikedVideos(videoId);
+            video.undoLike();
+        } else {
+            video.like();
+            authUser.addToLikeVideos(videoId);
+        }
+        userRepository.save(authUser);
+        videoRepository.save(video);
+    }
+
+    @Override
+    public void dislikeVideo(String videoId, Principal connectedUser) {
+        User authUser = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+
+        var video = videoRepository.findById(videoId).orElseThrow();
+        if (authUser.getLikedVideos().contains(videoId)) {
+            authUser.removeFromLikedVideos(videoId);
+            video.undoLike();
+        }
+
+        if (authUser.getDisLikedVideos().contains(videoId)) {
+            authUser.removeFromDislikedVideos(videoId);
+            video.undoDislike();
+        } else {
+            video.dislike();
+            authUser.addToDislikedVideos(videoId);
+        }
+        userRepository.save(authUser);
+        videoRepository.save(video);
     }
 }

@@ -15,4 +15,7 @@ public interface VideoService {
 
     Video getVideo(String id, Principal authUser);
     Video getVideo(String id);
+
+    void likeVideo(String videoId, Principal principal);
+    void dislikeVideo(String videoId, Principal connectedUser);
 }
