@@ -1,5 +1,6 @@
 package com.example.youtubeclonebackend.Service;
 
+import com.example.youtubeclonebackend.Entities.User;
 import com.example.youtubeclonebackend.Entities.Video;
 import com.example.youtubeclonebackend.Payload.Request.UploadVideoRequest;
 import com.example.youtubeclonebackend.Payload.Response.VideosResponse;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -62,5 +64,43 @@ public class VideoServiceImpl implements VideoService {
 
     public Video getVideo(String id) {
         return videoRepository.findById(id).orElseThrow();
+    }
+
+    @Override
+    public void likeVideo(String videoId, Principal connectedUser) {
+        User authUser = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+
+        var video = videoRepository.findById(videoId).orElseThrow();
+        if (authUser.getDisLikedVideos().contains(videoId)) {
+            authUser.removeFromDislikedVideos(videoId);
+            video.undoDislike();
+        }
+
+        if (!authUser.getLikedVideos().contains(videoId)) {
+            video.like();
+            authUser.addToLikeVideos(videoId);
+        } else {
+            authUser.removeFromLikedVideos(videoId);
+            video.undoLike();
+        }
+    }
+
+    @Override
+    public void dislikeVideo(String videoId, Principal connectedUser) {
+        User authUser = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+
+        var video = videoRepository.findById(videoId).orElseThrow();
+        if (authUser.getLikedVideos().contains(videoId)) {
+            authUser.removeFromLikedVideos(videoId);
+            video.undoLike();
+        }
+
+        if (!authUser.getDisLikedVideos().contains(videoId)) {
+            video.dislike();
+            authUser.addToDislikedVideos(videoId);
+        } else {
+            authUser.removeFromDislikedVideos(videoId);
+            video.undoDislike();
+        }
     }
 }
