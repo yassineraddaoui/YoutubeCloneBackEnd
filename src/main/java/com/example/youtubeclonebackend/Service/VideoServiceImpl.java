@@ -61,6 +61,8 @@ public class VideoServiceImpl implements VideoService {
     public Video getVideo(String videoId, Principal authUser) {
         var video = videoRepository.findById(videoId).orElseThrow();
         historyService.addToHistory(authUser, video.getId());
+        video.incrementViewCount();
+        videoRepository.save(video);
         return video;
     }
 
