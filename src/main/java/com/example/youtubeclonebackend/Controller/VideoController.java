@@ -1,5 +1,6 @@
 package com.example.youtubeclonebackend.Controller;
 
+import com.example.youtubeclonebackend.Entities.Comment;
 import com.example.youtubeclonebackend.Payload.Request.UploadVideoRequest;
 import com.example.youtubeclonebackend.Payload.Response.VideoResponse;
 import com.example.youtubeclonebackend.Service.VideoService;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -48,6 +50,11 @@ public class VideoController {
     @PostMapping("/dislike/{videoId}")
     void dislikeVideo(@PathVariable String videoId,Principal principal) {
         videoService.dislikeVideo(videoId,principal);
+    }
+
+    @GetMapping("/comment")
+    List<Comment> getVideoComments(@RequestParam(defaultValue = "0",name = "page") int page,@RequestParam(name = "id",required = true) String videoId ){
+        return videoService.getVideoComments(videoId,page);
     }
 
 }

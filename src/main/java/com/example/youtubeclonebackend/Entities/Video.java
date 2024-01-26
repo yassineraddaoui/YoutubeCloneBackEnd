@@ -52,4 +52,7 @@ public class Video {
     public void comment(Comment comment){
         commentList.add(comment);
     }
+    public void deleteComment(Comment comment){
+        commentList.remove(comment);
+    }
 }

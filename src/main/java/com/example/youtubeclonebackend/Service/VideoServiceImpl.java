@@ -1,9 +1,11 @@
 package com.example.youtubeclonebackend.Service;
 
+import com.example.youtubeclonebackend.Entities.Comment;
 import com.example.youtubeclonebackend.Entities.User;
 import com.example.youtubeclonebackend.Entities.Video;
 import com.example.youtubeclonebackend.Payload.Request.UploadVideoRequest;
 import com.example.youtubeclonebackend.Payload.Response.VideosResponse;
+import com.example.youtubeclonebackend.Repository.CommentRepository;
 import com.example.youtubeclonebackend.Repository.UserRepository;
 import com.example.youtubeclonebackend.Repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +27,7 @@ public class VideoServiceImpl implements VideoService {
     private final VideoStorageService videoStorageService;
     private final VideoRepository videoRepository;
     private final HistoryService historyService;
+    private final CommentRepository commentRepository;
     private final UserRepository userRepository;
 
     @Override
@@ -110,5 +114,12 @@ public class VideoServiceImpl implements VideoService {
         }
         userRepository.save(authUser);
         videoRepository.save(video);
+    }
+
+    @Override
+    public List<Comment> getVideoComments(String videoId, int pageNo) {
+        Pageable pageable = PageRequest.of(pageNo, 10);
+        var v = videoRepository.findById(videoId).orElseThrow();
+        return commentRepository.findByVideo(v, pageable).getContent();
     }
 }
