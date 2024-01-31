@@ -27,7 +27,7 @@ public class SecurityConfiguration {
                         .requestMatchers(WHITE_LIST_URI)
                         .permitAll()
                         .anyRequest()
-                        .authenticated()
+                        .permitAll()
                 )
                 .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
                 .build();

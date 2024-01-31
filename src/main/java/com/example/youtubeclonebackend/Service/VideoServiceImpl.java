@@ -51,7 +51,7 @@ public class VideoServiceImpl implements VideoService {
 
     @Override
     public Page<VideosResponse> findPaginated(int pageNo) {
-        Pageable pageable = PageRequest.of(pageNo, 3);
+        Pageable pageable = PageRequest.of(pageNo, 10);
         return videoRepository.findAll(pageable).map(VideosResponse::build);
     }
 
@@ -64,9 +64,9 @@ public class VideoServiceImpl implements VideoService {
     @Override
     public Video getVideo(String videoId, Principal authUser) {
         var video = videoRepository.findById(videoId).orElseThrow();
-        historyService.addToHistory(authUser, video.getId());
-        video.incrementViewCount();
+            video.incrementViewCount();
         videoRepository.save(video);
+        if (authUser != null) historyService.addToHistory(authUser, video.getId());
         return video;
     }
 
